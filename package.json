@@ -1,0 +1,57 @@
+{
+  "name": "@dmidz/vuejs-comps",
+  "version": "0.1.0",
+  "author": "David MARTIN <david@dmidz.com>",
+  "description": "VueJs components",
+  "main": "src/main.js",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dmidz/vuejs-comps.git"
+  },
+  "scripts": {
+    "serve": "vue-cli-service serve",
+    "build": "vue-cli-service build",
+    "_test": "lab test/unit.js -v -m 10000",
+    "_preversion": "npm test",
+    "release:patch": "npm version patch -m \"release v%s\"",
+    "release:minor": "npm version minor -m \"release v%s\"",
+    "release:major": "npm version major -m \"release v%s\"",
+    "postversion": "git push && git push --tags",
+    "npm:publish": "npm publish --access public"
+  },
+  "dependencies": {
+    "core-js": "^3.6.5",
+    "register-service-worker": "^1.7.1",
+    "vue": "^2.6.11",
+    "vue-router": "^3.2.0",
+    "vuex": "^3.4.0"
+  },
+  "devDependencies": {
+    "@hapi/code": "^8.0.2",
+    "@hapi/lab": "^23.0.0",
+    "@vue/cli-plugin-babel": "~4.4.0",
+    "@vue/cli-plugin-pwa": "~4.4.0",
+    "@vue/cli-plugin-router": "~4.4.0",
+    "@vue/cli-plugin-vuex": "~4.4.0",
+    "@vue/cli-service": "~4.4.0",
+    "bootstrap-vue": "^2.21.0",
+    "pug": "^3.0.0",
+    "pug-plain-loader": "^1.0.0",
+    "sass": "^1.26.5",
+    "sass-loader": "^8.0.2",
+    "vue-template-compiler": "^2.6.11"
+  },
+  "engines": {
+    "node": ">= 12.16.1",
+    "npm": ">= 6.13.4"
+  },
+  "browserslist": [
+    "> 1%",
+    "last 2 versions",
+    "not dead"
+  ]
+}

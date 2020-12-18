@@ -1,0 +1,36 @@
+
+@import "./_variables";
+
+@import "~@assets/css/_base";
+
+
+body {
+  background-image: linear-gradient(0deg, #14171a, #25282c);
+  //background-image:;
+}
+
+h1 {
+  font-weight:normal;
+}
+
+/*
+body {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  height: 100%;
+  margin: 0;
+  font-size: 1em;
+  color: #333;
+}
+
+.bgd3 {
+  background-color: rgba(0, 0, 0, 0.05);
+}
+
+.bgd-dark {
+  background-color: $color-dark;
+  color: $color-light;
+}
+
+*/
