@@ -8,7 +8,7 @@ const Inert = require( '@hapi/inert' );
 const init = async () => {
 	
 	const server = new Hapi.Server( {
-		port: ( process.env.NODE_ENV==='production' || !!process.env.HEROKU ) ? 80 : 3000,
+		port: process.env.PORT || 3000,//( process.env.NODE_ENV==='production' || !!process.env.HEROKU ) ? 80 : 3000,
 		routes: {
 			files: {
 				relativeTo: Path.join( __dirname, '../dist' )
