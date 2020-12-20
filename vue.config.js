@@ -4,6 +4,8 @@ require('dotenv').config();
 
 process.env.VUE_APP_API_URL = `http${(process.env.API_TLS==='true'?'s':'')}://${process.env.API_HOST}:${process.env.API_PORT}`;
 
+console.log('# ENV', process.env );
+
 //__ see https://cli.vuejs.org/config/
 module.exports = {
   // publicPath: '/build',
