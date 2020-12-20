@@ -36,13 +36,19 @@ export default function ( axios, router, _options ){
       return response;
     }, function (error) {
       const res = error.response;
-      console.log(' request error', res );
-      switch( res.status ){
-        case 401 :
-          if( hasLoginRoute && res.headers['www-authenticate'].match(/expired/i) ){
-            router.push({ name: options.loginFormRoute });
-          }
-          break;
+      
+      if( isDev ){
+        console.log(' request error', res, error );
+      }
+
+      if( res ){
+        switch( res.status ){
+          case 401 :
+            if( hasLoginRoute && res.headers['www-authenticate'].match(/expired/i) ){
+              router.push({ name: options.loginFormRoute });
+            }
+            break;
+        }
       }
       return Promise.reject(error);
     });
@@ -52,8 +58,8 @@ export default function ( axios, router, _options ){
 		namespaced: true,
     state: function() {
 		  const res = {
-        token: isDev ? localStorage.getItem('token' ) : null,
-        user: isDev ? jsonParse( localStorage.getItem('user' ) ) : null,
+        token: isDev ? sessionStorage.getItem('token' ) : null,
+        user: isDev ? jsonParse( sessionStorage.getItem('user' ) ) : null,
       };
       requestConf.headers.authorization = res.token;
       if( !res.token && hasLoginRoute ){
@@ -87,8 +93,8 @@ export default function ( axios, router, _options ){
         state.token = token;
         state.user = user;
         if( isDev ){
-          token ? localStorage.setItem('token', token ) :  localStorage.removeItem('token' );
-          user ? localStorage.setItem('user', JSON.stringify( user ) ) :  localStorage.removeItem('user' );
+          token ? sessionStorage.setItem('token', token ) :  sessionStorage.removeItem('token' );
+          user ? sessionStorage.setItem('user', JSON.stringify( user ) ) :  sessionStorage.removeItem('user' );
         }
         // console.log('setAuth', state );
       },

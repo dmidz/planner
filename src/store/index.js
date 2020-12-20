@@ -34,8 +34,8 @@ export default new Vuex.Store( {
 	mutations : {
 	},
 	modules: {
-    // auth: auth_jwt( axios, router, {
-    // }),
+    auth: auth_jwt( axios, router, {
+    }),
 		tasks : tasks( axios, {
 			// api_rest:{
 			// }

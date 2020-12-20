@@ -17,8 +17,8 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "_test": "lab test/unit.js -v -m 10000",
-    "_postinstall": "npm build && npm run api:install",
-    "postinstall": "npm build",
+    "postinstall": "npm build && npm run api:install",
+    "_postinstall": "npm build",
     "api:install": "npm install --no-save ./api",
     "api:start": "node -r dotenv/config ./api ./.env"
   },

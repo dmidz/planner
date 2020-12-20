@@ -1,0 +1,39 @@
+{
+  "name": "@dmidz/planner-api",
+  "version": "0.1.0",
+  "author": "David MARTIN <david@dmidz.com>",
+  "description": "planner RESTful API.",
+  "main": "src",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/dmidz/planner.git",
+    "directory": "api"
+  },
+  "scripts": {
+    "start": "node src",
+    "_test": "lab test/unit.js -v -m 15000",
+    "_preversion": "npm test"
+  },
+  "dependencies": {
+    "@dmidz/rest": "^2.0.2",
+    "@hapi/hapi": "^20.0.3",
+    "dotenv": "^8.2.0",
+    "lodash": "^4.17.20",
+    "sqlite3": "^5.0.0"
+  },
+  "peerDependencies": {},
+  "devDependencies": {},
+  "engines": {
+    "node": ">= 12.16.1",
+    "npm": ">= 6.13.4"
+  },
+  "keywords": [
+    "api",
+    "rest",
+    "restful"
+  ]
+}
