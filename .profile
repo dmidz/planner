@@ -1,0 +1,1 @@
+export APP_URL=$(heroku apps:info -s  | grep web-url | cut -d= -f2)

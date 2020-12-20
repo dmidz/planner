@@ -18,6 +18,7 @@ module.exports = async function( options ){
 			routes: {
 				cors: {
 					origin: [
+						process.env.APP_URL || 'http://my-app.org',
 						'http://localhost:*',
 						'https://localhost:*',
 						'chrome-search://local-ntp',//__ special google devtools origin
