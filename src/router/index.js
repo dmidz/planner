@@ -4,7 +4,7 @@ import VueRouter from 'vue-router';
 
 import Home from '@pages/Home';
 import routerPatchNavigationDup from "@/utils/routerPatchNavigationDup";
-// import DemoTemplate from '@pages/DemoTemplate';
+import Login from '@shared/components/Login';
 // import CONSTANTS from '@/constants';
 
 Vue.use( VueRouter );
@@ -16,6 +16,11 @@ const router = new VueRouter({
   		name: 'home',
   		component: Home,
   	},
+		{
+			path: '/login',
+			name: 'login',
+			component: Login
+		},
   ],
 });
 
