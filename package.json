@@ -17,11 +17,17 @@
     "serve": "vue-cli-service serve",
     "build": "vue-cli-service build",
     "_test": "lab test/unit.js -v -m 10000",
-    "postinstall": "npm build" },
+    "_postinstall": "npm build && npm run api:install",
+    "postinstall": "npm build",
+    "api:install": "npm install --no-save ./api",
+    "api:start": "node -r dotenv/config ./api ./.env"
+  },
   "dependencies": {
     "@hapi/hapi": "^20.0.3",
     "@hapi/inert": "^6.0.3",
+    "axios": "^0.21.0",
     "core-js": "^3.6.5",
+    "lodash": "^4.17.20",
     "register-service-worker": "^1.7.1",
     "vue": "^2.6.11",
     "vue-router": "^3.2.0",
