@@ -4,6 +4,8 @@ import jsonParse from '@/utils/jsonParse';
 
 import CONSTANTS from '@/constants';
 const isDev = CONSTANTS.DEV;
+//__ TODO : store refresh token inside cookie httpOnly instead
+const saveToken = true;// isDev;
 
 export default function ( axios, router, _options ){
   const options = {
@@ -58,8 +60,8 @@ export default function ( axios, router, _options ){
 		namespaced: true,
     state: function() {
 		  const res = {
-        token: isDev ? sessionStorage.getItem('token' ) : null,
-        user: isDev ? jsonParse( sessionStorage.getItem('user' ) ) : null,
+        token: saveToken ? sessionStorage.getItem('token' ) : null,
+        user: saveToken ? jsonParse( sessionStorage.getItem('user' ) ) : null,
       };
       requestConf.headers.authorization = res.token;
       if( !res.token && hasLoginRoute ){
@@ -92,7 +94,7 @@ export default function ( axios, router, _options ){
         requestConf.headers.authorization = token;
         state.token = token;
         state.user = user;
-        if( isDev ){
+        if( saveToken ){
           token ? sessionStorage.setItem('token', token ) :  sessionStorage.removeItem('token' );
           user ? sessionStorage.setItem('user', JSON.stringify( user ) ) :  sessionStorage.removeItem('user' );
         }
