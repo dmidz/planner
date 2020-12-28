@@ -1,1 +1,1 @@
-export APP_URL=$(heroku apps:info -s  | grep web-url | cut -d= -f2)
+export APP_URL=$(heroku info -s scopeli-planner | grep web-url | cut -d= -f2)
