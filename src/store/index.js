@@ -4,9 +4,9 @@ import Vuex from 'vuex'
 import Axios from 'axios';
 
 import CONSTANTS from '@/constants';
-import router from '@/router';
+// import router from '@/router';
 import tasks from './tasks';
-import auth_jwt from '@shared/store/auth_jwt';
+// import auth_jwt from '@shared/store/auth_jwt';
 
 Vue.use( Vuex );
 
@@ -34,8 +34,8 @@ export default new Vuex.Store( {
 	mutations : {
 	},
 	modules: {
-    auth: auth_jwt( axios, router, {
-    }),
+    // auth: auth_jwt( axios, router, {
+    // }),
 		tasks : tasks( axios, {
 			// api_rest:{
 			// }
