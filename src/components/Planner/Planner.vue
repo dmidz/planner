@@ -41,7 +41,7 @@ import each from 'lodash/each';
 import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
 
-import { BTab, BCard, BTable,
+import { //BTab, BCard, BTable,
 	BIconAward as IconExp, BIconArrowLeftSquare as IconArrowLeft, BIconArrowRightSquare as IconArrowRight
 } from 'bootstrap-vue';
 
@@ -51,7 +51,7 @@ import { nodeAncestor } from '@/utils';
 
 export default {
 	name: 'dz-planner',
-	components: { BTab, BCard, BTable, IconExp, IconArrowLeft, IconArrowRight },
+	components: { /*BTab, BCard, BTable,*/ IconExp, IconArrowLeft, IconArrowRight },
 	props:{
 		debug: {
 			default: true,

@@ -57,19 +57,18 @@ a:hover {
   margin: 10px auto;
   padding: 10px 20px;
   text-align: center;
-  border: 1px solid #3300FF
-}
+  border: 1px solid #3300FF;
+  p {
+    text-align: center
+  }
+  &.success {
+    border: 1px solid #FF0066
+  }
+  &.error {
+    border: 2px solid #F57900
+  }
 
-.msg-success {
-  border: 1px solid #FF0066
-}
 
-.msg-error {
-  border: 2px solid #F57900
-}
-
-.msg-user p, .msg-error p, .msg-success p {
-  text-align: center
 }
 
 .bt-group {
