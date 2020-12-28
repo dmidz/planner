@@ -1,4 +1,4 @@
-# vuesjs-comps
+# Planner ( UI : VueJS, API : Node )
 
 ## Project setup
 ```
