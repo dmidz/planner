@@ -7,7 +7,7 @@
 		.head
 			button.nav
 				icon-arrow-left
-			h2.period Lundi 14 déc.
+			h2.period {{currentPeriod.label}}
 			button.nav
 				icon-arrow-right
 		.body
@@ -17,17 +17,25 @@
 						tr
 							th Postes
 							th(v-for="(slot, index) in slots" :style="'width:'+colWidth" ) {{slot.label}}
+								.trans(v-if="slot.transition" :title="slot.transition")
 					tbody
 						template(v-for="(post, index) in (() => { rowNum = 0; return this.posts;})()")
 							//template(v-if="post.exp")
-							tr(v-for="(count, countIndex) in (post.count||1)" @click="handleClickRow" :key="rowNum++" :data-num="rowNum" :class="rowNum === rowSelectIndex ? 'select' : ''")
+							tr(v-for="(count, countIndex) in (post.count||1)" @click="handleClickRow" :key="rowNum++" :data-num="rowNum"
+									:class="{select:rowNum === rowSelectIndex, ['post-'+count]:true, even: index%2 }")
 								//tr(v-for="(row, index) in valuesByPost" @click="handleClickRow" :data-num="index" :class="index === rowSelectIndex ? 'select' : ''")
 								th(v-if="post.exp&&count<=post.exp" scope="row" class="post exp" title="Coop formé ou expérimenté")
 										IconExp(class="rounded-circle")
 										| {{post.label.toLowerCase()}}
 								th(v-else class="post" scope="row") {{post.label.toLowerCase()}}
-								td(v-for="(slot, slotIndex) in slots") {{rowValue( post, slotIndex, countIndex )}}
-										//{{get( valuesByPost.exp, `${countIndex}.${slotIndex}.${countIndex}` )}}
+								//td(v-for="(slot, slotIndex) in slots")
+								template(v-for="(slot, slotIndex) in slots")
+									td(v-for="value in [rowValue( slotIndex, post, countIndex )]" :class="{closed:slotPostClosed( value )}")
+										//span(v-for="value in [rowValue( slotIndex, post, countIndex )]" :class="{open:slotPostOpen( value )}")
+										| {{value}}
+									//| {{v = rowValue( slotIndex, post, countIndex )}}
+								//| {{slot.posts}}
+									//{{get( valuesByPost.exp, `${countIndex}.${slotIndex}.${countIndex}` )}}
 								//template()
 									td(v-for="(slot, slotIndex) in slots")
 										//{{post.values[slotIndex]}}
@@ -40,6 +48,8 @@ import map from 'lodash/map';
 import each from 'lodash/each';
 import get from 'lodash/get';
 import keyBy from 'lodash/keyBy';
+import isUndefined from 'lodash/isUndefined';
+import isNil from 'lodash/isNil';
 
 import { //BTab, BCard, BTable,
 	BIconAward as IconExp, BIconArrowLeftSquare as IconArrowLeft, BIconArrowRightSquare as IconArrowRight
@@ -60,11 +70,58 @@ export default {
 	data(){
 		return {
 			periods: [
-				{ label: '14-19 déc. 2020', template: 1, values: [
+				{ label: 'mardi 05/01/21', template: 1,
+					slots: [
+						{
+							ouverture: ['MORICEAU Ludovic'],
+							appui: ['MORICEAU Ludovic'],
+							stock: ['BESNARD Thomas / 4','DUMESNIL Laurent','MOREAU Philippe',null],
+						},
+					],
+					// slots : [
+					// 	{
+					// 		ouverture: ['MORICEAU Ludovic'],
+					// 		appui: ['Appui-coop' ],
+					// 		stock: ['BESNARD Thomas / 4','DUMESNIL Laurent','MOREAU Philippe'],
+					// 	},
+					// 	{
+					// 		// ouverture: ['MORICEAU Ludovic'],
+					// 		appui: ['KASSIANOFF Irmine / 1' ],
+					// 		stock: ['PONTOIZEAU Catherine','DUMARD Valentin',null],
+					// 		accueil_vac: ['Accueil Vacation - Volant'],
+					// 	},
+					// ],
+					// posts:{
+				// { post: 'accueil_vac' },
+				// { post: 'regul_entree' },
+				// { post: 'hygiene' },
+				// { post: 'volant' },
+				// { post: 'caisse' },
+				// { post: 'fromagerie' },
+				// { post: 'boucherie' },
+				// { post: 'primeurs' },
+				// { post: 'vrac' },
+				// { post: 'menage' },
+				// { post: 'fermeture' },
+					
+					// }
+					
+				}
+			],
+/*
+				[
 						{ post: 'stock', slot: 0, value: 'David' },
 						{ post: 'stock', slot: 0, value: 'Thomas' },
-				] },
-			],
+				]
+*/
+				// },
+			// ],
+			// periods: [
+			// 	{ label: '14-19 déc. 2020', template: 1, values: [
+			// 			{ post: 'stock', slot: 0, value: 'David' },
+			// 			{ post: 'stock', slot: 0, value: 'Thomas' },
+			// 	] },
+			// ],
 			currentPeriodIndex: 0,
 			availablePosts: {
 				ouverture: { label: 'OUVERTURE' },
@@ -85,19 +142,23 @@ export default {
 			periodTemplates: {
 				1: {
 					slots: [
-						{ label: '6h - 9h' },
-						{ label: '8h30 - 11h30' },
-						{ label: '11h - 14h' },
-						{ label: '13h30 - 16h30' },
-						{ label: '16h - 19h' },
-						{ label: '18h - 21h' },
+						{ label: '6h - 9h', transition:'transition des équipes', posts: {
+							ouverture: 1, appui: 1, stock: 5, accueil_vac: 1
+						} },
+						// { label: '8h30 - 11h30', transition:'transition des équipes', posts: {
+						// 	appui: 1, stock: 3, accueil_vac: 1, hygiene: 1,
+						// }},
+						// { label: '11h - 14h', transition:'transition des équipes' },
+						// { label: '13h30 - 16h30', transition:'transition des équipes' },
+						// { label: '16h - 19h', transition:'transition des équipes' },
+						// { label: '18h - 21h' },
 					],
 					posts: [
 						{ post: 'ouverture' },
 						{ post: 'appui' },
 						{ post: 'stock', exp: 2, count: 5 },
 						{ post: 'accueil_vac' },
-						{ post: 'regul_entree' },
+						// { post: 'regul_entree' },
 						{ post: 'hygiene' },
 						{ post: 'volant' },
 						{ post: 'caisse', exp: 1, count: 3 },
@@ -144,6 +205,7 @@ export default {
 		},
 		colWidth(){
 			// return '2%';
+			// const len = this.slots.length;
 			return (100/(this.slots.length+1))+'%';
 		},
 		// slots(){
@@ -152,38 +214,42 @@ export default {
 		valuesByPost(){
 			let res = [];
 			if( !this.currentPeriod || !this.periodTemplate ){  return res;}
-			// const valuesByPost = keyBy( this.currentPeriod.values, 'post' )
-			/*
-			 stock: [// _ exp 2
-			 	0 exp : [//_ row
-						0: [ value, value ],// slots
-				 ]
-			 	1 exp : [//_ row
-						0: [ value, value ],// slots
-				 ]
-			 	2 		: []
-			* */
-			// const valuesByPost = {};
+
 			each( this.currentPeriod.values, value => {
 				const post = this.postsByKey[value.post];
 				const exp = get( post, 'exp', 0 );
 				if( !res[value.post] ){ res[value.post] = [];}//{ post };}//__ rows
 				if( !res[value.post][value.slot] ){	res[value.post][value.slot] = [];}//_ slots
 				res[value.post][value.slot].push( value );
-				// let index = 0;
-				// if( exp && !value.exp ){	index = exp;}
-				// while( index < post.count && res[value.post][value.slot][index] ){  index++;}
-				// res[value.post][value.slot][index] = value;
-				
 			});
-		
+			
+/*
+			each( this.currentPeriod.values, value => {
+				const post = this.postsByKey[value.post];
+				const exp = get( post, 'exp', 0 );
+				if( !res[value.post] ){ res[value.post] = [];}//{ post };}//__ rows
+				if( !res[value.post][value.slot] ){	res[value.post][value.slot] = [];}//_ slots
+				res[value.post][value.slot].push( value );
+			});
+*/
+			
+			
+			console.log('valuesByPost', res );
 			return res;
 		},
 	},
 	methods:{
-		rowValue( post, slotIndex, postIndex ){
-			// console.log('rowValue', post, slotIndex, postIndex );
-			return get( this.valuesByPost[post.post], `${slotIndex}.${postIndex}.value` );
+		rowValue( slotIndex, post, postIndex = 0 ){
+			let res = get( this.currentPeriod.slots[slotIndex], `${post.post}[${postIndex}]` );
+			// console.log('rowValue', res, isUndefined( res ), slotIndex, post, postIndex );
+			// if( isNil( res ) ){  res = isUndefined( res ) ? res : ' ';}
+			return res;
+			// return get( this.valuesByPost[post.post], `${slotIndex}.${postIndex}.value` );
+		},
+		slotPostClosed( value ){
+			// console.log('slotPostOpen', value, !isUndefined( value ) );
+			return isUndefined( value );
+			// return get( this.slots, `${slotIndex}.${post.post}`, 0 ) >= postIndex;
 		},
 		handleClickRow( event ){
 			const row = nodeAncestor( event.target, '[data-num]');
@@ -199,14 +265,20 @@ export default {
 <style lang="scss">
 
 @import "~@assets/css/_variables";
+.page {
+	flex: 1 1;
+}
 
 .planner {
+	flex: 1 1;
 	background-color: #fff;
 	border-radius: 3px;
 	//padding: 5px;
 	display: flex;
 	flex-direction: column;
 	overflow:hidden;
+	box-shadow: 0 0 4px rgba(0,0,0,0.5);
+	border:1px solid rgba(255,255,255,0.5);
 	.head {
 		display: flex;
 		flex-direction: row;
@@ -231,16 +303,15 @@ export default {
 		overflow: hidden;
 	}
 	.table-wrapper {
-		height:100%;
+		//height:100%;
+		max-height:100%;
 		overflow:auto;
 		border: 1px solid #CCC;
 		&::-webkit-scrollbar {
-			background-color:#eee;
+			//background-color:#eee;
+			background-color:rgba(0,0,0,0.35);
 			border:1px solid #ddd;
 			width: 8px;
-			//padding:2px;
-			//border:1px solid #fff;
-			//height:100%;
 		}
 		&::-webkit-scrollbar-thumb {
 			background-color:#fff;
@@ -274,15 +345,25 @@ export default {
 					//width: auto;
 					min-width: 140px;
 					background-color: #cff0ff;
-					//background-color: transparent;
 				}
 				&::before {
 					content: " ";
 					border-bottom: 2px solid $color-dark-20;
 					position:absolute;
-					bottom:0;
+					bottom:-2px;
 					left: 0;
 					right:0;
+				}
+				.trans {
+					position:absolute;
+					bottom:0;
+					top: 0;
+					right: 0px;
+					width:20px;
+					background-color:rgba(0,0,0,0.07);
+					&:hover {
+						background-color:rgba(0,0,0,0.15);
+					}
 				}
 			}
 			.period {
@@ -299,6 +380,9 @@ export default {
 				//	position: absolute;
 				//	top: 0; left:0; right: 0; bottom: 0;
 				//}
+				th, td {
+					//border: 1px solid $color-light-10;
+				}
 				th {
 					border-right: 2px solid $color-dark-20;
 					text-transform:capitalize;
@@ -308,12 +392,25 @@ export default {
 					//	background-color: #00b3ff12;
 					//}
 				}
+				td {
+					&.closed {
+						background-color:rgba(0,0,0,0.1);
+					}
+				}
+				&.even {
+					background-color:rgba(0,0,0,0.025);
+				}
 				&.select {
 					background-color:#f8ffb8;
 				}
 				&:hover {
 					th, td {
 						background-color: $color-dark-5;
+					}
+				}
+				&.post-1 {
+					th, td {
+						border-top: 2px solid #ddd;
 					}
 				}
 			}
