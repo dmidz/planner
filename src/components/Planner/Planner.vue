@@ -16,29 +16,29 @@
 					thead
 						tr
 							th Postes
-							th(v-for="(slot, index) in slots" :style="'width:'+colWidth" ) {{slot.label}}
-								.trans(v-if="slot.transition" :title="slot.transition")
+							th(v-for="(column, index) in columns" :style="'width:'+colWidth" ) {{column.label}}
+								.trans(v-if="column.transition" :title="column.transition")
 					tbody
-						template(v-for="(post, index) in (() => { rowNum = 0; return this.posts;})()")
+						template(v-for="(post, postKey, index) in (() => { rowNum = 0; return this.posts;})()")
 							//template(v-if="post.exp")
 							tr(v-for="(count, countIndex) in (post.count||1)" @click="handleClickRow" :key="rowNum++" :data-num="rowNum"
-									:class="{select:rowNum === rowSelectIndex, ['post-'+count]:true, even: index%2 }")
+									:class="{['last']:count>=post.count, select:rowNum === rowSelectIndex, even: index%2 }")
 								//tr(v-for="(row, index) in valuesByPost" @click="handleClickRow" :data-num="index" :class="index === rowSelectIndex ? 'select' : ''")
 								th(v-if="post.exp&&count<=post.exp" scope="row" class="post exp" title="Coop formé ou expérimenté")
 										IconExp(class="rounded-circle")
 										| {{post.label.toLowerCase()}}
 								th(v-else class="post" scope="row") {{post.label.toLowerCase()}}
-								//td(v-for="(slot, slotIndex) in slots")
-								template(v-for="(slot, slotIndex) in slots")
-									td(v-for="value in [rowValue( slotIndex, post, countIndex )]" :class="{closed:slotPostClosed( value )}")
-										//span(v-for="value in [rowValue( slotIndex, post, countIndex )]" :class="{open:slotPostOpen( value )}")
+								//td(v-for="(column, columnIndex) in columns")
+								template(v-for="(column, columnIndex) in columns")
+									td(v-for="value in [rowValue( columnIndex, postKey, countIndex )]" :class="{closed:columnPostClosed( value )}")
+										//span(v-for="value in [rowValue( columnIndex, post, countIndex )]" :class="{open:columnPostOpen( value )}")
 										| {{value}}
-									//| {{v = rowValue( slotIndex, post, countIndex )}}
-								//| {{slot.posts}}
-									//{{get( valuesByPost.exp, `${countIndex}.${slotIndex}.${countIndex}` )}}
+									//| {{v = rowValue( columnIndex, post, countIndex )}}
+								//| {{column.posts}}
+									//{{get( valuesByPost.exp, `${countIndex}.${columnIndex}.${countIndex}` )}}
 								//template()
-									td(v-for="(slot, slotIndex) in slots")
-										//{{post.values[slotIndex]}}
+									td(v-for="(column, columnIndex) in columns")
+										//{{post.values[columnIndex]}}
 							//b-table(:fields="columns" :items="rows")
 </template>
 
@@ -71,14 +71,26 @@ export default {
 		return {
 			periods: [
 				{ label: 'mardi 05/01/21', template: 1,
-					slots: [
+					columns: [
 						{
 							ouverture: ['MORICEAU Ludovic'],
 							appui: ['MORICEAU Ludovic'],
-							stock: ['BESNARD Thomas / 4','DUMESNIL Laurent','MOREAU Philippe',null],
+							stock: ['BESNARD Thomas / 4','DUMESNIL Laurent',null,null],
+							accueil_vac: [null],
+						},
+						{
+							appui: ['MORICEAU Ludovic'],
+							stock: ['LELIEVRE Sylvie', null],
+							accueil_vac: [null],
+							hygiene: [null],
+							caisse: [null,null],
+							fromagerie: [null],
+							boucherie: ['CHITELMAN Aline'],
+							primeurs: ['ORLY Maelle'],
+							vrac: ['HOUEL Josseline', 'DUBOIS Morgane (à former)', null],
 						},
 					],
-					// slots : [
+					// columns : [
 					// 	{
 					// 		ouverture: ['MORICEAU Ludovic'],
 					// 		appui: ['Appui-coop' ],
@@ -110,16 +122,16 @@ export default {
 			],
 /*
 				[
-						{ post: 'stock', slot: 0, value: 'David' },
-						{ post: 'stock', slot: 0, value: 'Thomas' },
+						{ post: 'stock', column: 0, value: 'David' },
+						{ post: 'stock', column: 0, value: 'Thomas' },
 				]
 */
 				// },
 			// ],
 			// periods: [
 			// 	{ label: '14-19 déc. 2020', template: 1, values: [
-			// 			{ post: 'stock', slot: 0, value: 'David' },
-			// 			{ post: 'stock', slot: 0, value: 'Thomas' },
+			// 			{ post: 'stock', column: 0, value: 'David' },
+			// 			{ post: 'stock', column: 0, value: 'Thomas' },
 			// 	] },
 			// ],
 			currentPeriodIndex: 0,
@@ -141,10 +153,38 @@ export default {
 			},
 			periodTemplates: {
 				1: {
-					slots: [
-						{ label: '6h - 9h', transition:'transition des équipes', posts: {
-							ouverture: 1, appui: 1, stock: 5, accueil_vac: 1
-						} },
+					label: 'Thuesday',
+					columns: [
+						{ label: '6h - 9h', transition:'transition des équipes',
+							posts: {
+								ouverture: 1, appui: 1, stock: 5, accueil_vac: 1
+							}
+						},
+						{ label: '8h30 - 11h30', transition:'transition des équipes',
+							posts: {
+								appui: 1, stock: 2, accueil_vac: 1, hygiene: 1, caisse: 2, fromagerie:1, boucherie: 1, primeurs:1, vrac: 3, menage: 3,
+							}
+						},
+						{ label: '11h - 14h', transition:'transition des équipes',
+							posts: {
+								ouverture: 1, appui: 1, stock: 5, accueil_vac: 1
+							}
+						},
+						{ label: '13h30 - 16h30', transition:'transition des équipes',
+							posts: {
+								ouverture: 1, appui: 1, stock: 5, accueil_vac: 1
+							}
+						},
+						{ label: '16 - 19h', transition:'transition des équipes',
+							posts: {
+								ouverture: 1, appui: 1, stock: 5, accueil_vac: 1
+							}
+						},
+						{ label: '18h - 21h',
+							posts: {
+								ouverture: 1, appui: 1, stock: 5, accueil_vac: 1
+							}
+						},
 						// { label: '8h30 - 11h30', transition:'transition des équipes', posts: {
 						// 	appui: 1, stock: 3, accueil_vac: 1, hygiene: 1,
 						// }},
@@ -153,29 +193,29 @@ export default {
 						// { label: '16h - 19h', transition:'transition des équipes' },
 						// { label: '18h - 21h' },
 					],
-					posts: [
-						{ post: 'ouverture' },
-						{ post: 'appui' },
-						{ post: 'stock', exp: 2, count: 5 },
-						{ post: 'accueil_vac' },
-						// { post: 'regul_entree' },
-						{ post: 'hygiene' },
-						{ post: 'volant' },
-						{ post: 'caisse', exp: 1, count: 3 },
-						{ post: 'fromagerie' },
-						{ post: 'boucherie' },
-						{ post: 'primeurs' },
-						{ post: 'vrac', exp: 1, count: 3 },
-						{ post: 'menage', exp: 1, count: 4 },
-						{ post: 'fermeture' },
-					]
+					// posts: [
+					// 	{ post: 'ouverture' },
+					// 	{ post: 'appui' },
+					// 	{ post: 'stock', exp: 2, count: 5 },
+					// 	{ post: 'accueil_vac' },
+					// 	// { post: 'regul_entree' },
+					// 	{ post: 'hygiene' },
+					// 	{ post: 'volant' },
+					// 	{ post: 'caisse', exp: 1, count: 3 },
+					// 	{ post: 'fromagerie' },
+					// 	{ post: 'boucherie' },
+					// 	{ post: 'primeurs' },
+					// 	{ post: 'vrac', exp: 1, count: 3 },
+					// 	{ post: 'menage', exp: 1, count: 4 },
+					// 	{ post: 'fermeture' },
+					// ]
 				},
 			},
 			rowSelectIndex: null,
 		};
 	},
 	mounted(){
-		this.log('mounted', this.posts, this.valuesByPost, this );
+		this.log('mounted', this.posts/*, this.valuesByPost*/, this );
 	},
 	computed: {
 		currentPeriod(){
@@ -187,17 +227,29 @@ export default {
 				console.error(new Error('Period template not found : '+this.currentPeriod.template), this.currentPeriod );}
 			return res;
 		},
-		slots(){
-			return this.periodTemplate.slots;
+		columns(){
+			return this.periodTemplate.columns;
 		},
 		posts(){
-			const res = [];
-			for(let i = 0, max = this.periodTemplate.posts.length; i < max; i++ ){
-				const post = this.periodTemplate.posts[i];
-				const avPost = this.availablePosts[post.post];
-				if(!avPost){  continue;}
-				res.push( { ...avPost, ...post } );
+			const res = {};
+			for( let key in this.availablePosts ){
+				let avPost = this.availablePosts[key];
+				for(let i = 0, max = this.periodTemplate.columns.length; i < max; i++ ){
+					const col = this.periodTemplate.columns[i];
+					// console.log('col', col );
+					if( !col.posts[key] ){ continue;}
+					let post = res[key] || { ...avPost, count: 0 };
+					post.count = Math.max( post.count, col.posts[key] );
+					res[key] = post;
+				}
 			}
+			// console.log('posts', res);
+			// for(let i = 0, max = this.periodTemplate.posts.length; i < max; i++ ){
+			// 	const post = this.periodTemplate.posts[i];
+			// 	const avPost = this.availablePosts[post.post];
+			// 	if(!avPost){  continue;}
+			// 	res.push( { ...avPost, ...post } );
+			// }
 			return res;
 		},
 		postsByKey(){
@@ -205,51 +257,49 @@ export default {
 		},
 		colWidth(){
 			// return '2%';
-			// const len = this.slots.length;
-			return (100/(this.slots.length+1))+'%';
+			// const len = this.columns.length;
+			return (100/(this.columns.length+1))+'%';
 		},
-		// slots(){
-		// 	return this.periodTemplate.slots;
+		// columns(){
+		// 	return this.periodTemplate.columns;
 		// },
-		valuesByPost(){
-			let res = [];
-			if( !this.currentPeriod || !this.periodTemplate ){  return res;}
-
-			each( this.currentPeriod.values, value => {
-				const post = this.postsByKey[value.post];
-				const exp = get( post, 'exp', 0 );
-				if( !res[value.post] ){ res[value.post] = [];}//{ post };}//__ rows
-				if( !res[value.post][value.slot] ){	res[value.post][value.slot] = [];}//_ slots
-				res[value.post][value.slot].push( value );
-			});
-			
-/*
-			each( this.currentPeriod.values, value => {
-				const post = this.postsByKey[value.post];
-				const exp = get( post, 'exp', 0 );
-				if( !res[value.post] ){ res[value.post] = [];}//{ post };}//__ rows
-				if( !res[value.post][value.slot] ){	res[value.post][value.slot] = [];}//_ slots
-				res[value.post][value.slot].push( value );
-			});
-*/
-			
-			
-			console.log('valuesByPost', res );
-			return res;
-		},
+// 		valuesByPost(){
+// 			let res = [];
+// 			if( !this.currentPeriod || !this.periodTemplate ){  return res;}
+//
+// 			each( this.currentPeriod.values, value => {
+// 				const post = this.postsByKey[value.post];
+// 				const exp = get( post, 'exp', 0 );
+// 				if( !res[value.post] ){ res[value.post] = [];}//{ post };}//__ rows
+// 				if( !res[value.post][value.column] ){	res[value.post][value.column] = [];}//_ columns
+// 				res[value.post][value.column].push( value );
+// 			});
+//
+// /*
+// 			each( this.currentPeriod.values, value => {
+// 				const post = this.postsByKey[value.post];
+// 				const exp = get( post, 'exp', 0 );
+// 				if( !res[value.post] ){ res[value.post] = [];}//{ post };}//__ rows
+// 				if( !res[value.post][value.column] ){	res[value.post][value.column] = [];}//_ columns
+// 				res[value.post][value.column].push( value );
+// 			});
+// */
+//
+//
+// 			console.log('valuesByPost', res );
+// 			return res;
+// 		},
 	},
 	methods:{
-		rowValue( slotIndex, post, postIndex = 0 ){
-			let res = get( this.currentPeriod.slots[slotIndex], `${post.post}[${postIndex}]` );
-			// console.log('rowValue', res, isUndefined( res ), slotIndex, post, postIndex );
-			// if( isNil( res ) ){  res = isUndefined( res ) ? res : ' ';}
+		rowValue( columnIndex, postKey, postIndex = 0 ){
+			let res = get( this.currentPeriod.columns[columnIndex], `${postKey}[${postIndex}]` );
+			// console.log('rowValue', res, this.currentPeriod.columns[columnIndex], columnIndex, postKey, postIndex );
 			return res;
-			// return get( this.valuesByPost[post.post], `${slotIndex}.${postIndex}.value` );
 		},
-		slotPostClosed( value ){
-			// console.log('slotPostOpen', value, !isUndefined( value ) );
+		columnPostClosed( value ){
+			// console.log('columnPostOpen', value, !isUndefined( value ) );
 			return isUndefined( value );
-			// return get( this.slots, `${slotIndex}.${post.post}`, 0 ) >= postIndex;
+			// return get( this.columns, `${columnIndex}.${post.post}`, 0 ) >= postIndex;
 		},
 		handleClickRow( event ){
 			const row = nodeAncestor( event.target, '[data-num]');
@@ -329,6 +379,7 @@ export default {
 		td, th {
 			//padding: 2px 5px;
 			padding: 4px 5px;
+			border: 1px solid rgba(0,0,0,0.1);
 		}
 		thead {
 			//display: block;
@@ -359,7 +410,7 @@ export default {
 					bottom:0;
 					top: 0;
 					right: 0px;
-					width:20px;
+					width:10%;
 					background-color:rgba(0,0,0,0.07);
 					&:hover {
 						background-color:rgba(0,0,0,0.15);
@@ -398,7 +449,7 @@ export default {
 					}
 				}
 				&.even {
-					background-color:rgba(0,0,0,0.025);
+					//background-color:rgba(0,0,0,0.025);
 				}
 				&.select {
 					background-color:#f8ffb8;
@@ -408,9 +459,10 @@ export default {
 						background-color: $color-dark-5;
 					}
 				}
-				&.post-1 {
+				//&.post:last-child {
+				&.last {
 					th, td {
-						border-top: 2px solid #ddd;
+						border-bottom: 1px solid rgba(0,0,0,0.3);
 					}
 				}
 			}
